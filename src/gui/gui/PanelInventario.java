@@ -2,6 +2,7 @@ package gui;
 
 import models.Producto;
 import services.InventarioService;
+import utils.ExportarPDF;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -35,17 +36,20 @@ public class PanelInventario extends JPanel {
         add(new JScrollPane(tabla), BorderLayout.CENTER);
 
         // ---------------------------
-        // BOTONES CRUD
+        // BOTONES CRUD + EXPORTAR
         // ---------------------------
         JPanel panelBotones = new JPanel();
 
         JButton btnNuevo = new JButton("Nuevo producto");
         JButton btnEditar = new JButton("Editar");
         JButton btnEliminar = new JButton("Eliminar");
+        JButton btnPDF = new JButton("Exportar PDF"); // <=== NUEVO BOTÓN
 
         panelBotones.add(btnNuevo);
         panelBotones.add(btnEditar);
         panelBotones.add(btnEliminar);
+        panelBotones.add(btnPDF); // <=== LO AGREGAMOS
+
         add(panelBotones, BorderLayout.SOUTH);
 
         // EVENTOS ----------------------
@@ -76,6 +80,10 @@ public class PanelInventario extends JPanel {
             String codigo = tabla.getValueAt(fila, 0).toString();
             inventario.eliminarProducto(codigo);
             cargarTabla();
+        });
+
+        btnPDF.addActionListener(e -> {
+            ExportarPDF.exportarTabla(tabla);
         });
 
         cargarTabla();
