@@ -10,7 +10,6 @@ public class MainWindow extends JFrame {
 
     private JPanel mainPanel;
 
-    // Servicios compartidos
     private InventarioService inventarioService = new InventarioService();
     private EntradaService entradaService = new EntradaService();
     private VentaService ventaService = new VentaService();
@@ -31,11 +30,11 @@ public class MainWindow extends JFrame {
 
     private void initSideMenu() {
         JPanel sideMenu = new JPanel();
-        sideMenu.setBackground(new Color(30, 30, 30));
+        sideMenu.setBackground(new Color(30,30,30));
         sideMenu.setPreferredSize(new Dimension(220, getHeight()));
         sideMenu.setLayout(new BoxLayout(sideMenu, BoxLayout.Y_AXIS));
 
-        JLabel title = new JLabel("  DON CIVIL ⚒");
+        JLabel title = new JLabel(" DON CIVIL ");
         title.setForeground(Color.WHITE);
         title.setFont(new Font("Segoe UI", Font.BOLD, 22));
         title.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
@@ -45,6 +44,7 @@ public class MainWindow extends JFrame {
         JButton btnVentas = sideButton("Registrar Venta");
         JButton btnHistorial = sideButton("Historial");
 
+        // CAMBIO DE PANELES SIN PERDER DATOS
         btnInventario.addActionListener(e -> showPanel(new PanelInventario(inventarioService)));
         btnEntradas.addActionListener(e -> showPanel(new PanelEntradas(inventarioService, entradaService)));
         btnVentas.addActionListener(e -> showPanel(new PanelVentas(inventarioService, ventaService)));
@@ -70,7 +70,7 @@ public class MainWindow extends JFrame {
         JButton btn = new JButton(text);
         btn.setMaximumSize(new Dimension(220, 40));
         btn.setFocusPainted(false);
-        btn.setBackground(new Color(45, 45, 45));
+        btn.setBackground(new Color(45,45,45));
         btn.setForeground(Color.WHITE);
         btn.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
@@ -79,7 +79,7 @@ public class MainWindow extends JFrame {
 
     private void initMainPanel() {
         mainPanel = new JPanel(new BorderLayout());
-        showPanel(new PanelInventario(inventarioService)); // Panel por defecto
+        showPanel(new PanelInventario(inventarioService)); 
         add(mainPanel, BorderLayout.CENTER);
     }
 

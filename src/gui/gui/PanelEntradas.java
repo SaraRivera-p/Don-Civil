@@ -17,9 +17,10 @@ public class PanelEntradas extends JPanel {
         JTextField txtCodigo = new JTextField();
         JTextField txtCantidad = new JTextField();
 
-        add(new JLabel("Código del producto:"));
+        add(new JLabel("Código del Producto:"));
         add(txtCodigo);
-        add(new JLabel("Cantidad ingresada:"));
+
+        add(new JLabel("Cantidad Entrante:"));
         add(txtCantidad);
 
         JButton btnGuardar = new JButton("Registrar Entrada");
@@ -29,15 +30,23 @@ public class PanelEntradas extends JPanel {
             String codigo = txtCodigo.getText();
             int cantidad = Integer.parseInt(txtCantidad.getText());
 
+            boolean encontrado = false;
+
             for (Producto p : inventario.getLista()) {
-                if (p.getCodigo().equals(codigo)) {
+
+                if (p.getCodigo().equalsIgnoreCase(codigo)) {
                     p.setStock(p.getStock() + cantidad);
+                    entradas.registrar(new Entrada(codigo, cantidad));
+                    encontrado = true;
                 }
             }
 
-            entradas.registrar(new Entrada(codigo, cantidad));
+            if (!encontrado) {
+                JOptionPane.showMessageDialog(this, "Producto no encontrado.");
+                return;
+            }
 
-            JOptionPane.showMessageDialog(this, "Entrada registrada");
+            JOptionPane.showMessageDialog(this, "Entrada registrada correctamente.");
         });
 
         add(new JLabel(""));
