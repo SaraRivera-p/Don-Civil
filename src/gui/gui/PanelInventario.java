@@ -1,96 +1,113 @@
 package gui;
 
+import models.Producto;
+import services.InventarioService;
+
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import services.InventarioService;
-import models.Producto;
 
 public class PanelInventario extends JPanel {
 
     private InventarioService inventario;
-    private JTable table;
-    private JLabel lblItems, lblStock, lblValor;
+    private JTable tabla;
+    private DefaultTableModel modelo;
 
     public PanelInventario(InventarioService inventario) {
         this.inventario = inventario;
-
         setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
 
-        initTopCards();
-        initTable();
+        // ---------------------------
+        // TARJETAS SUPERIORES
+        // ---------------------------
+        JPanel panelTop = new JPanel(new GridLayout(1, 3, 10, 10));
+        panelTop.add(card("TOTAL ITEMS", String.valueOf(inventario.getTotalItems()), Color.ORANGE));
+        panelTop.add(card("STOCK TOTAL", String.valueOf(inventario.getStockTotal()), Color.GREEN));
+        panelTop.add(card("VALORIZADO (S/.)", String.format("%.2f", inventario.getValorTotal()), Color.MAGENTA));
+
+        add(panelTop, BorderLayout.NORTH);
+
+        // ---------------------------
+        // TABLA DE PRODUCTOS
+        // ---------------------------
+        modelo = new DefaultTableModel(new String[]{"Cód.", "Producto", "Marca", "Stock", "Precio"}, 0);
+        tabla = new JTable(modelo);
+        add(new JScrollPane(tabla), BorderLayout.CENTER);
+
+        // ---------------------------
+        // BOTONES CRUD
+        // ---------------------------
+        JPanel panelBotones = new JPanel();
+
+        JButton btnNuevo = new JButton("Nuevo producto");
+        JButton btnEditar = new JButton("Editar");
+        JButton btnEliminar = new JButton("Eliminar");
+
+        panelBotones.add(btnNuevo);
+        panelBotones.add(btnEditar);
+        panelBotones.add(btnEliminar);
+        add(panelBotones, BorderLayout.SOUTH);
+
+        // EVENTOS ----------------------
+
+        btnNuevo.addActionListener(e -> {
+            new FormNuevoProducto((JFrame) SwingUtilities.getWindowAncestor(this), inventario).setVisible(true);
+            cargarTabla();
+        });
+
+        btnEditar.addActionListener(e -> {
+            int fila = tabla.getSelectedRow();
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(this, "Seleccione un producto");
+                return;
+            }
+            String codigo = tabla.getValueAt(fila, 0).toString();
+
+            new FormEditarProducto((JFrame) SwingUtilities.getWindowAncestor(this), inventario, codigo).setVisible(true);
+            cargarTabla();
+        });
+
+        btnEliminar.addActionListener(e -> {
+            int fila = tabla.getSelectedRow();
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(this, "Seleccione un producto");
+                return;
+            }
+            String codigo = tabla.getValueAt(fila, 0).toString();
+            inventario.eliminarProducto(codigo);
+            cargarTabla();
+        });
+
         cargarTabla();
     }
 
-    private void initTopCards() {
+    // ---------------------------
+    // TARJETAS DEL DASHBOARD
+    // ---------------------------
+    private JPanel card(String titulo, String valor, Color colorBorde) {
+        JPanel p = new JPanel(new BorderLayout());
+        p.setBorder(BorderFactory.createLineBorder(colorBorde, 3));
 
-        JPanel top = new JPanel(new GridLayout(1, 3, 15, 15));
-        top.setBorder(new EmptyBorder(15, 15, 15, 15));
+        JLabel lblTitulo = new JLabel(titulo, SwingConstants.CENTER);
+        lblTitulo.setFont(new Font("Arial", Font.BOLD, 15));
 
-        lblItems = new JLabel("0");
-        lblStock = new JLabel("0");
-        lblValor = new JLabel("0.00");
+        JLabel lblValor = new JLabel(valor, SwingConstants.CENTER);
+        lblValor.setFont(new Font("Arial", Font.BOLD, 30));
 
-        top.add(card("TOTAL ITEMS", lblItems, new Color(255, 140, 0)));
-        top.add(card("STOCK TOTAL", lblStock, new Color(0, 180, 0)));
-        top.add(card("VALORIZADO (S/.)", lblValor, new Color(160, 70, 200)));
+        p.add(lblTitulo, BorderLayout.NORTH);
+        p.add(lblValor, BorderLayout.CENTER);
 
-        add(top, BorderLayout.NORTH);
+        return p;
     }
 
-    private JPanel card(String titulo, JLabel valor, Color color) {
+    // ---------------------------
+    // CARGAR TABLA
+    // ---------------------------
+    private void cargarTabla() {
+        modelo.setRowCount(0);
 
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.setBackground(Color.WHITE);
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(color, 2),
-                new EmptyBorder(10, 10, 10, 10)
-        ));
-
-        JLabel t = new JLabel(titulo);
-        t.setFont(new Font("Segoe UI", Font.BOLD, 16));
-
-        valor.setFont(new Font("Segoe UI", Font.BOLD, 30));
-        valor.setForeground(color);
-
-        panel.add(t, BorderLayout.NORTH);
-        panel.add(valor, BorderLayout.CENTER);
-
-        return panel;
-    }
-
-    private void initTable() {
-
-        String[] columnas = {"Cód.", "Producto", "Marca", "Stock", "Precio"};
-
-        table = new JTable(new DefaultTableModel(columnas, 0));
-        table.setRowHeight(28);
-
-        JButton btnNuevo = new JButton("Nuevo Producto");
-        btnNuevo.addActionListener(e ->
-                new FormNuevoProducto(null, inventario, this)
-        );
-
-        JPanel abajo = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        abajo.add(btnNuevo);
-
-        JPanel contenedor = new JPanel(new BorderLayout());
-        contenedor.setBorder(new EmptyBorder(10, 15, 15, 15));
-        contenedor.add(new JScrollPane(table), BorderLayout.CENTER);
-        contenedor.add(abajo, BorderLayout.SOUTH);
-
-        add(contenedor, BorderLayout.CENTER);
-    }
-
-    public void cargarTabla() {
-
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0);
-
-        for (Producto p : inventario.getLista()) {
-            model.addRow(new Object[]{
+        for (Producto p : inventario.getProductos()) {
+            modelo.addRow(new Object[]{
                     p.getCodigo(),
                     p.getNombre(),
                     p.getMarca(),
@@ -98,13 +115,5 @@ public class PanelInventario extends JPanel {
                     "S/. " + p.getPrecio()
             });
         }
-
-        actualizarEstadisticas();
-    }
-
-    private void actualizarEstadisticas() {
-        lblItems.setText(String.valueOf(inventario.totalItems()));
-        lblStock.setText(String.valueOf(inventario.totalStock()));
-        lblValor.setText(String.format("%.2f", inventario.totalValorizado()));
     }
 }

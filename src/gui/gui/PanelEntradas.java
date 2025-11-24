@@ -2,54 +2,69 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+
+import models.Producto;
 import services.EntradaService;
 import services.InventarioService;
-import models.Entrada;
-import models.Producto;
 
 public class PanelEntradas extends JPanel {
 
+    private InventarioService inventario;
+    private EntradaService entradas;
+
+    private JTextField txtCodigo;
+    private JTextField txtCantidad;
+
     public PanelEntradas(InventarioService inventario, EntradaService entradas) {
+        this.inventario = inventario;
+        this.entradas = entradas;
 
-        setLayout(new GridLayout(5, 2, 10, 10));
-        setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        JTextField txtCodigo = new JTextField();
-        JTextField txtCantidad = new JTextField();
+        setLayout(new GridLayout(6, 2, 10, 10));
 
         add(new JLabel("Código del Producto:"));
+        txtCodigo = new JTextField();
         add(txtCodigo);
 
         add(new JLabel("Cantidad Entrante:"));
+        txtCantidad = new JTextField();
         add(txtCantidad);
 
-        JButton btnGuardar = new JButton("Registrar Entrada");
+        JButton btnRegistrar = new JButton("Registrar Entrada");
+        add(btnRegistrar);
 
-        btnGuardar.addActionListener(e -> {
+        btnRegistrar.addActionListener(e -> registrarEntrada());
+    }
 
-            String codigo = txtCodigo.getText();
-            int cantidad = Integer.parseInt(txtCantidad.getText());
+    private void registrarEntrada() {
+        String codigo = txtCodigo.getText().trim();
+        String cantTexto = txtCantidad.getText().trim();
 
-            boolean encontrado = false;
+        if (codigo.isEmpty() || cantTexto.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Complete todos los campos.");
+            return;
+        }
 
-            for (Producto p : inventario.getLista()) {
+        int cant;
+        try {
+            cant = Integer.parseInt(cantTexto);
+            if (cant <= 0) throw new Exception();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Cantidad inválida.");
+            return;
+        }
 
-                if (p.getCodigo().equalsIgnoreCase(codigo)) {
-                    p.setStock(p.getStock() + cantidad);
-                    entradas.registrar(new Entrada(codigo, cantidad));
-                    encontrado = true;
-                }
-            }
+        Producto p = inventario.buscarProducto(codigo);
+        if (p == null) {
+            JOptionPane.showMessageDialog(this, "Producto no encontrado.");
+            return;
+        }
 
-            if (!encontrado) {
-                JOptionPane.showMessageDialog(this, "Producto no encontrado.");
-                return;
-            }
+        // Actualizar Stock
+        p.setStock(p.getStock() + cant);
 
-            JOptionPane.showMessageDialog(this, "Entrada registrada correctamente.");
-        });
+        // Registrar en historial
+        entradas.registrarEntrada(codigo, cant);
 
-        add(new JLabel(""));
-        add(btnGuardar);
+        JOptionPane.showMessageDialog(this, "Entrada registrada correctamente.");
     }
 }

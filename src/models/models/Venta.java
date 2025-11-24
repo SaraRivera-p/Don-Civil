@@ -4,20 +4,17 @@ import java.time.LocalDateTime;
 
 public class Venta {
 
-    private String codigoProducto;
+    private String codigo;
     private int cantidad;
-    private double precioUnitario;
     private LocalDateTime fecha;
 
-    public Venta(String codigoProducto, int cantidad, double precioUnitario) {
-        this.codigoProducto = codigoProducto;
+    public Venta(String codigo, int cantidad) {
+        this.codigo = codigo;
         this.cantidad = cantidad;
-        this.precioUnitario = precioUnitario;
         this.fecha = LocalDateTime.now();
     }
 
-    public String getCodigoProducto() { return codigoProducto; }
+    public String getCodigo() { return codigo; }
     public int getCantidad() { return cantidad; }
-    public double getPrecioUnitario() { return precioUnitario; }
     public LocalDateTime getFecha() { return fecha; }
 }

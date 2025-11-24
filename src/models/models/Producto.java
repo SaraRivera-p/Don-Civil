@@ -16,13 +16,27 @@ public class Producto {
         this.precio = precio;
     }
 
+    // GETTERS
     public String getCodigo() { return codigo; }
     public String getNombre() { return nombre; }
     public String getMarca() { return marca; }
     public int getStock() { return stock; }
     public double getPrecio() { return precio; }
 
+    // SETTERS
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
     public void setStock(int stock) {
         this.stock = stock;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
     }
 }

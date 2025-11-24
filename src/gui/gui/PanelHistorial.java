@@ -3,28 +3,59 @@ package gui;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import services.VentaService;
+
 import services.EntradaService;
-import models.Venta;
-import models.Entrada;
+import services.VentaService;
 
 public class PanelHistorial extends JPanel {
 
-    public PanelHistorial(VentaService ventas, EntradaService entradas) {
+    private EntradaService entradas;
+    private VentaService ventas;
+    private JTable table;
+    private DefaultTableModel model;
+
+    public PanelHistorial(EntradaService entradas, VentaService ventas) {
+        this.entradas = entradas;
+        this.ventas = ventas;
+
         setLayout(new BorderLayout());
 
-        String[] cols = {"Tipo", "Código", "Cantidad", "Fecha"};
-        DefaultTableModel model = new DefaultTableModel(cols, 0);
-        JTable table = new JTable(model);
+        // --------------------------
+        // TABLA DE HISTORIAL
+        // --------------------------
+        model = new DefaultTableModel(new String[]{"Tipo", "Código", "Cantidad", "Fecha"}, 0);
+        table = new JTable(model);
 
-        for (Venta v : ventas.getVentas()) {
-            model.addRow(new Object[]{"VENTA", v.getCodigoProducto(), v.getCantidad(), v.getFecha()});
-        }
+        JScrollPane scroll = new JScrollPane(table);
+        add(scroll, BorderLayout.CENTER);
 
-        for (Entrada e : entradas.getEntradas()) {
-            model.addRow(new Object[]{"ENTRADA", e.getCodigoProducto(), e.getCantidad(), e.getFecha()});
-        }
+        cargarHistorial();
+    }
 
-        add(new JScrollPane(table), BorderLayout.CENTER);
+    // --------------------------
+    // CARGAR TODOS LOS REGISTROS
+    // --------------------------
+    public void cargarHistorial() {
+        model.setRowCount(0); // limpiar tabla
+
+        // Cargar ventas
+        ventas.getVentas().forEach(v -> {
+            model.addRow(new Object[]{
+                    "VENTA",
+                    v.getCodigo(),
+                    v.getCantidad(),
+                    v.getFecha()
+            });
+        });
+
+        // Cargar entradas
+        entradas.getEntradas().forEach(e -> {
+            model.addRow(new Object[]{
+                    "ENTRADA",
+                    e.getCodigo(),
+                    e.getCantidad(),
+                    e.getFecha()
+            });
+        });
     }
 }

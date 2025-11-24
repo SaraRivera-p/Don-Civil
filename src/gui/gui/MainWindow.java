@@ -2,91 +2,76 @@ package gui;
 
 import javax.swing.*;
 import java.awt.*;
+
 import services.InventarioService;
 import services.EntradaService;
 import services.VentaService;
 
 public class MainWindow extends JFrame {
 
-    private JPanel mainPanel;
-
-    private InventarioService inventarioService = new InventarioService();
-    private EntradaService entradaService = new EntradaService();
-    private VentaService ventaService = new VentaService();
+    private InventarioService inventario = new InventarioService();
+    private EntradaService entradas = new EntradaService();
+    private VentaService ventas = new VentaService();
 
     public MainWindow() {
 
         setTitle("Don Civil - Dashboard Inventario");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1200, 700);
+        setSize(1100, 700);
         setLocationRelativeTo(null);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        initSideMenu();
-        initMainPanel();
+        // MENU LATERAL
+        JPanel menu = new JPanel();
+        menu.setLayout(new GridLayout(6, 1, 5, 5));
+        menu.setPreferredSize(new Dimension(220, 0));
+        menu.setBackground(new Color(30, 30, 30));
 
-        setVisible(true);
-    }
+        JLabel titulo = new JLabel("  DON CIVIL ⚒");
+        titulo.setForeground(Color.WHITE);
+        titulo.setFont(new Font("Arial", Font.BOLD, 22));
 
-    private void initSideMenu() {
-        JPanel sideMenu = new JPanel();
-        sideMenu.setBackground(new Color(30,30,30));
-        sideMenu.setPreferredSize(new Dimension(220, getHeight()));
-        sideMenu.setLayout(new BoxLayout(sideMenu, BoxLayout.Y_AXIS));
+        JButton btnInv = new JButton("Inventario");
+        JButton btnEnt = new JButton("Registrar Entrada");
+        JButton btnVen = new JButton("Registrar Venta");
+        JButton btnHis = new JButton("Historial");
+        JButton btnSalir = new JButton("Salir");
 
-        JLabel title = new JLabel(" DON CIVIL ");
-        title.setForeground(Color.WHITE);
-        title.setFont(new Font("Segoe UI", Font.BOLD, 22));
-        title.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+        JButton[] botones = {btnInv, btnEnt, btnVen, btnHis, btnSalir};
+        for (JButton b : botones) {
+            b.setForeground(Color.WHITE);
+            b.setBackground(new Color(45, 45, 45));
+            b.setFocusPainted(false);
+        }
 
-        JButton btnInventario = sideButton("Inventario");
-        JButton btnEntradas = sideButton("Registrar Entrada");
-        JButton btnVentas = sideButton("Registrar Venta");
-        JButton btnHistorial = sideButton("Historial");
+        menu.add(titulo);
+        menu.add(btnInv);
+        menu.add(btnEnt);
+        menu.add(btnVen);
+        menu.add(btnHis);
+        menu.add(btnSalir);
 
-        // CAMBIO DE PANELES SIN PERDER DATOS
-        btnInventario.addActionListener(e -> showPanel(new PanelInventario(inventarioService)));
-        btnEntradas.addActionListener(e -> showPanel(new PanelEntradas(inventarioService, entradaService)));
-        btnVentas.addActionListener(e -> showPanel(new PanelVentas(inventarioService, ventaService)));
-        btnHistorial.addActionListener(e -> showPanel(new PanelHistorial(ventaService, entradaService)));
+        add(menu, BorderLayout.WEST);
 
-        sideMenu.add(title);
-        sideMenu.add(btnInventario);
-        sideMenu.add(btnEntradas);
-        sideMenu.add(btnVentas);
-        sideMenu.add(btnHistorial);
-
-        sideMenu.add(Box.createVerticalGlue());
-
-        JButton exit = sideButton("Salir");
-        exit.setForeground(Color.ORANGE);
-        exit.addActionListener(e -> System.exit(0));
-        sideMenu.add(exit);
-
-        add(sideMenu, BorderLayout.WEST);
-    }
-
-    private JButton sideButton(String text) {
-        JButton btn = new JButton(text);
-        btn.setMaximumSize(new Dimension(220, 40));
-        btn.setFocusPainted(false);
-        btn.setBackground(new Color(45,45,45));
-        btn.setForeground(Color.WHITE);
-        btn.setFont(new Font("Segoe UI", Font.PLAIN, 15));
-        btn.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
-        return btn;
-    }
-
-    private void initMainPanel() {
-        mainPanel = new JPanel(new BorderLayout());
-        showPanel(new PanelInventario(inventarioService)); 
+        // PANEL CENTRAL
+        JPanel mainPanel = new JPanel(new BorderLayout());
         add(mainPanel, BorderLayout.CENTER);
+
+        // MOSTRAR INVENTARIO AL INICIO
+        mainPanel.add(new PanelInventario(inventario), BorderLayout.CENTER);
+
+        // EVENTOS
+        btnInv.addActionListener(e -> cargarPanel(mainPanel, new PanelInventario(inventario)));
+        btnEnt.addActionListener(e -> cargarPanel(mainPanel, new PanelEntradas(inventario, entradas)));
+        btnVen.addActionListener(e -> cargarPanel(mainPanel, new PanelVentas(inventario, ventas)));
+        btnHis.addActionListener(e -> cargarPanel(mainPanel, new PanelHistorial(entradas, ventas)));
+        btnSalir.addActionListener(e -> System.exit(0));
     }
 
-    public void showPanel(JPanel panel) {
-        mainPanel.removeAll();
-        mainPanel.add(panel, BorderLayout.CENTER);
-        mainPanel.revalidate();
-        mainPanel.repaint();
+    private void cargarPanel(JPanel contenedor, JPanel panel) {
+        contenedor.removeAll();
+        contenedor.add(panel, BorderLayout.CENTER);
+        contenedor.revalidate();
+        contenedor.repaint();
     }
 }
