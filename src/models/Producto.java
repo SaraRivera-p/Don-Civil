@@ -1,9 +1,3 @@
-package models;
-
-/**
- * Clase base que representa un producto general.
- * Aplica abstracción y encapsulamiento.
- */
 public abstract class Producto {
     protected String codigo;
     protected String nombre;

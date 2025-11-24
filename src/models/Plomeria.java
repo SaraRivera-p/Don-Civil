@@ -1,5 +1,3 @@
-package models;
-
 public class Plomeria extends Producto {
     private String tamaño;
 

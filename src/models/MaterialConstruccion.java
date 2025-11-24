@@ -1,5 +1,3 @@
-package models;
-
 public class MaterialConstruccion extends Producto {
     private String categoria;
 

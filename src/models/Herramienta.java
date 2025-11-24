@@ -1,5 +1,3 @@
-package models;
-
 public class Herramienta extends Producto {
     private String tipo;
 
