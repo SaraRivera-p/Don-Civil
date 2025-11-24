@@ -1,4 +1,4 @@
-package ui;
+package src.ui;
 
 import models.*;
 import services.*;
