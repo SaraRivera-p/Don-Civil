@@ -1,7 +1,7 @@
-import ui.MenuPrincipal;
+import gui.MainWindow;
 
 public class Main {
     public static void main(String[] args) {
-        new MenuPrincipal().iniciar();
+        new MainWindow(); // Aquí se abre la GUI
     }
 }
