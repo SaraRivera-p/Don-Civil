@@ -2,6 +2,6 @@ import gui.MainWindow;
 
 public class Main {
     public static void main(String[] args) {
-        new MainWindow();  // la ventana principal
+        new MainWindow().setVisible(true);
     }
 }
