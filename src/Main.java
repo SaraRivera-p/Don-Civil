@@ -1,5 +1,7 @@
+import gui.MainWindow;
+
 public class Main {
     public static void main(String[] args) {
-        new gui.MainWindow();  // Ejecuta la ventana principal
+        new MainWindow(); // Ejecuta la ventana principal
     }
 }
