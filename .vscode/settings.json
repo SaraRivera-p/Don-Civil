@@ -1,17 +1,6 @@
 {
-    "java.project.referencedLibraries": {
-        "include": [
-            "c:\\Users\\HP\\Downloads\\itextpdf-5.5.13.3 (1).jar"
-        ],
-        "exclude": [
-            "c:\\Users\\HP\\Downloads\\itextpdf-5.5.13.3-javadoc.jar"
-        ]
-    },
-    "java.project.sourcePaths": [
-        ".",
-        "src",
-        "src\\gui",
-        "src\\models",
-        "src\\services"
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "c:\\Users\\HP\\Downloads\\itextpdf-5.5.13.3 (1).jar"
     ]
 }
