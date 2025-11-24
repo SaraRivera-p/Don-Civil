@@ -6,6 +6,7 @@ import java.awt.*;
 
 import services.EntradaService;
 import services.VentaService;
+import utils.ExportarPDF;
 
 public class PanelHistorial extends JPanel {
 
@@ -29,6 +30,20 @@ public class PanelHistorial extends JPanel {
         JScrollPane scroll = new JScrollPane(table);
         add(scroll, BorderLayout.CENTER);
 
+        // BOTÓN EXPORTAR
+        JButton btnPDF = new JButton("Exportar PDF");
+        btnPDF.addActionListener(e -> {
+            ExportarPDF.exportarTabla(
+                    table
+            );
+        });
+
+        JPanel panelBotones = new JPanel();
+        panelBotones.add(btnPDF);
+
+        add(panelBotones, BorderLayout.SOUTH);
+
+        // Cargar datos
         cargarHistorial();
     }
 
@@ -40,7 +55,7 @@ public class PanelHistorial extends JPanel {
 
         // Cargar ventas
         ventas.getVentas().forEach(v -> {
-            model.addRow(new Object[]{
+            model.addRow(new Object[] {
                     "VENTA",
                     v.getCodigo(),
                     v.getCantidad(),
