@@ -3,16 +3,9 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "Main",
-            "projectName": "Don-Civil_327cddc"
-        },
-        {
-            "type": "java",
             "name": "Run Don-Civil",
             "request": "launch",
-            "mainClass": "Main",
+            "mainClass": "src.Main",
             "projectName": "Don-Civil"
         }
     ]
