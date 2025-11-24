@@ -1,22 +1,27 @@
+package gui;
+
 import javax.swing.*;
 import java.awt.*;
+import services.InventarioService;
+import models.Producto;
 
 public class FormNuevoProducto extends JDialog {
 
-    public FormNuevoProducto(JFrame parent) {
+    public FormNuevoProducto(JFrame parent, InventarioService inventario, PanelInventario panel) {
         super(parent, "Nuevo Producto", true);
-        setSize(400, 380);
+
+        setSize(400, 350);
         setLocationRelativeTo(parent);
         setLayout(new GridLayout(6, 2, 10, 10));
-        
+
         JTextField txtCodigo = new JTextField();
         JTextField txtNombre = new JTextField();
-        JTextField txtMarca  = new JTextField();
-        JTextField txtStock  = new JTextField();
+        JTextField txtMarca = new JTextField();
+        JTextField txtStock = new JTextField();
         JTextField txtPrecio = new JTextField();
 
         add(new JLabel("Código:"));
-        add(txtCodigo); 
+        add(txtCodigo);
         add(new JLabel("Nombre:"));
         add(txtNombre);
         add(new JLabel("Marca:"));
@@ -27,25 +32,22 @@ public class FormNuevoProducto extends JDialog {
         add(txtPrecio);
 
         JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.setBackground(new Color(0, 150, 0));
-        btnGuardar.setForeground(Color.WHITE);
 
         btnGuardar.addActionListener(e -> {
+            Producto p = new Producto(
+                    txtCodigo.getText(),
+                    txtNombre.getText(),
+                    txtMarca.getText(),
+                    Integer.parseInt(txtStock.getText()),
+                    Double.parseDouble(txtPrecio.getText())
+            );
 
-            String codigo = txtCodigo.getText();
-            String nombre = txtNombre.getText();
-            String marca  = txtMarca.getText();
-            int stock     = Integer.parseInt(txtStock.getText());
-            double precio = Double.parseDouble(txtPrecio.getText());
-
-            // Aquí agregamos a la tabla del MainWindow
-            MainWindow mw = (MainWindow) parent;
-            mw.agregarProductoATabla(codigo, nombre, marca, stock, precio);
-
+            inventario.agregar(p);
+            panel.cargarTabla();
             dispose();
         });
 
-        add(new JLabel()); // espacio
+        add(new JLabel(""));
         add(btnGuardar);
 
         setVisible(true);
